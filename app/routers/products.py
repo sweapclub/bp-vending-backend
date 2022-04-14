@@ -19,9 +19,8 @@ async def get_products():
 
     result = []
     for p in list_product:
-        print(p)
         result.append(Product(productId=p.product_id,
-                      productName=p.product_name, amount=p.amount, price=p.price, image=base64.b64encode(open("./img/56.png", "rb").read()).decode("utf-8")))
+                      productName=p.product_name, amount=p.amount, price=p.price, image=base64.b64encode(open("./img/{}.png".format(p.product_id), "rb").read()).decode("utf-8")))
     return OutputGetProduct(status="Success", data=result)
 
 
@@ -31,7 +30,6 @@ async def put_update_stock(input: InputUpdateStock, product_id: str):
         return OutputStatus(status="Fail", errorMessage="Amount can't be minus")
 
     error_message = update_stock(product_id, input.updateStock)
-    print(error_message)
     if error_message != None:
         return OutputStatus(status="Fail", errorMessage=error_message)
     return OutputStatus(status="Success")

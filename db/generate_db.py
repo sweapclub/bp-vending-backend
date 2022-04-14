@@ -5,19 +5,30 @@ try:
 except Exception as e:
     print(e)
 conn.execute(''' Create Table IF NOT EXISTS product (
-    product_id INTEGER PRIMARY KEY AUTOINCREMENT,
+    product_id TEXT PRIMARY KEY,
     product_name TEXT NOT NULL,
     price INT NOT NULL,
     amount INT NOT NULL
 )''')
 conn.execute(''' DELETE FROM product ''')
 conn.execute('''
-    Insert into product(product_name,price,amount) 
+    Insert into product(product_id,product_name,price,amount) 
     values
-    ('coke',15,10),
-    ('Pepsi',15,0),
-    ('Seven Up', 13,10),
-    ('แฟนต้าน้ำแดง', 13,3)
+    ('1','coke',15,10),
+    ('2','Pepsi',15,0),
+    ('3','ป๊อกกี้ รสช็อกโกแลต', 18,10),
+    ('4','ป๊อกกี๊ รสสตรอเบอร์รี', 18,10),
+    ('5','ป๊อกกี้ รสคุกกี้และครีม', 18,10),
+    ('6','ป๊อกกี้ รสมิลค์กี้มัทฉะ', 18,10),
+    ('7','มาม่าหมูสับ', 16,10),
+    ('8','Cetaphil', 240,10),
+    ('9','เลย์ ลม', 20,10),
+    ('10','แบรนด์ยกลัง',185,10),
+    ('11','เพนนีโอ', 75,3),
+    ('12','แก้วน้ำสูญญากาศ',315,5),
+    ('13','Zebra Knife',239,2),
+    ('14','หน้ากากอนามัยหนาพิเศษ',69,10),
+    ('15','มีโอ',109,2)
 ''')
 
 conn.execute('''
@@ -52,8 +63,6 @@ conn.execute(''' create table if not exists report(
     change int not null
 )
 ''')
-
-
 
 conn.commit()
 conn.close() 

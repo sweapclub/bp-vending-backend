@@ -45,7 +45,6 @@ async def post_payment(input: InputPayment):
     money = input.money
     total_price = product.price * input.amount
     change = money - total_price
-    # print(money, total_price, change)
 
     if change < 0:
         return OutputPayment(status="Fail", errorMessage="Your money is not enough...")
@@ -73,7 +72,6 @@ async def post_payment(input: InputPayment):
                 suggestion.append(
                     'Increse money to {} baht'.format(money + (5 - (change_left % 5))))
 
-        print(suggestion)
         return OutputPayment(status="Fail", suggestion=suggestion, errorMessage="We dont have enough change...".format(money - change_left))
     else:
         error_message = update_wallet(Wallet(

@@ -8,7 +8,6 @@ def get_wallet():
     try:
         products = db.query(Wallet).first()
     except Exception as e:
-        print(e)
         error_message = "Error has occurred"
     return products, error_message
 
@@ -31,7 +30,6 @@ def update_wallet(wallet: Wallet):
         )
         db.commit()
     except Exception as e:
-        print(e)
         db.rollback()
         error_message = "Error has occurred"
     return error_message

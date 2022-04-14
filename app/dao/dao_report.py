@@ -24,7 +24,6 @@ def add_to_report(product_name, product_price, amount, input_money, change):
         db.add(transaction)
         db.commit()
     except Exception as e:
-        print(e)
         db.rollback()
         error_message = "Error has occurred"
     return error_message
