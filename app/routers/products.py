@@ -1,5 +1,5 @@
 from fastapi import APIRouter
-
+import base64
 from app.dao.dao_product import (get_all_product, update_stock)
 from app.dto.dto_product import (
     Product, OutputGetProduct, InputUpdateStock, OutputStatus)
@@ -20,7 +20,7 @@ async def get_products():
     result = []
     for p in list_product:
         result.append(Product(productId=p.product_id,
-                      productName=p.product_name, amount=p.amount, price=p.price))
+                      productName=p.product_name, amount=p.amount, price=p.price, image=base64.b64encode(open("./img/56.png", "rb").read()).decode("utf-8")))
     return OutputGetProduct(status="Success", data=result)
 
 

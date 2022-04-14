@@ -15,3 +15,4 @@ app.include_router(
     payments.router,
     prefix=version_prefix
 )
+
