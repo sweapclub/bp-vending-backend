@@ -8,6 +8,7 @@ def get_all_product():
     try:
         products = db.query(Product).all()
     except Exception as e:
+        print(e)
         error_message = "Error has occurred"
     return products, error_message
 

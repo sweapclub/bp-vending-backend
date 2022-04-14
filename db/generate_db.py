@@ -1,5 +1,5 @@
 import sqlite3
-conn = sqlite3.connect('db/vending-machine.db')
+conn = sqlite3.connect('./db/vending-machine.db')
 try:
     conn.execute(''' DROP TABlE product ''')
 except Exception as e:
