@@ -43,5 +43,5 @@ class ChangeDetail(BaseModel):
     amount : int
 
 class OutputPayment(OutputStatus):
-    data: Optional[List[ChangeDetail]]
-    suggeestion : List[str] = []
+    data: Optional[List[ChangeDetail]] = []
+    suggestion : List[str] = []

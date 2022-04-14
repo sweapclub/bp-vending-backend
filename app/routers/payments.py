@@ -1,6 +1,8 @@
+from app.dto.dto_common import OutputStatus
 from fastapi import APIRouter
 from app.dao.dao_payment import (get_wallet, update_wallet)
-from app.dao.dao_product import (get_product)
+from app.dao.dao_product import (get_product, update_stock)
+from app.dao.dao_report import (add_to_report)
 
 from app.dto.dto_payment import (
     OutputGetWallet, OutputPayment, Wallet, InputPayment, ChangeDetail)
@@ -9,6 +11,24 @@ router = APIRouter(
     tags=["Payments"],
     responses={404: {"description": "Not found"}}
 )
+
+
+@router.patch('/', summary="Adjust money in machine", response_model=OutputStatus)
+async def patch_update_wallet(wallet: Wallet):
+    error_message = update_wallet(Wallet(
+        coin_1=wallet.coin_1,
+        coin_5=wallet.coin_5,
+        coin_10=wallet.coin_10,
+        bank_20=wallet.bank_20,
+        bank_50=wallet.bank_50,
+        bank_100=wallet.bank_100,
+        bank_500=wallet.bank_500,
+        bank_1000=wallet.bank_1000,
+    ))
+
+    if error_message != None:
+        return OutputPayment(status="Fail", errorMessage=error_message)
+    return OutputStatus(status="Success")
 
 
 @router.post('/', summary="Payment and change methods", response_model=OutputPayment)
@@ -25,7 +45,7 @@ async def post_payment(input: InputPayment):
     money = input.money
     total_price = product.price * input.amount
     change = money - total_price
-    print(money, total_price, change)
+    # print(money, total_price, change)
 
     if change < 0:
         return OutputPayment(status="Fail", errorMessage="Your money is not enough...")
@@ -54,7 +74,7 @@ async def post_payment(input: InputPayment):
                     'Increse money to {} baht'.format(money + (5 - (change_left % 5))))
 
         print(suggestion)
-        return OutputPayment(status="Fail", suggeestion=suggestion, errorMessage="We dont have enough change...".format(money - change_left))
+        return OutputPayment(status="Fail", suggestion=suggestion, errorMessage="We dont have enough change...".format(money - change_left))
     else:
         error_message = update_wallet(Wallet(
             coin_1=wallet['coin_1'],
@@ -69,6 +89,15 @@ async def post_payment(input: InputPayment):
 
         if error_message != None:
             return OutputPayment(status="Fail", errorMessage=error_message)
+
+        error_message = update_stock(
+            input.productId, product.amount - input.amount)
+        if error_message != None:
+            return OutputPayment(status="Fail", errorMessage=error_message)
+        error_message = add_to_report(product_name=product.product_name, product_price=product.price,
+                                      amount=input.amount, input_money=money, change=change)
+        if error_message != None:
+            print(error_message)
         change_detail = []
         for c in change_log:
             if (c['amount'] > 0):
@@ -94,13 +123,9 @@ async def get_current_money():
     )
     return OutputGetWallet(status="Success", data=result)
 
-
-@router.put('/', summary="Update coin or bank")
-async def update_stock():
-    return "Update stock !!"
-
-
 # helper
+
+
 def cal_recursive(amount, value, change, used=0):
     if (amount == 0 or change < value):
         return change, used
@@ -111,7 +136,7 @@ def cal_recursive(amount, value, change, used=0):
         return cal_recursive(amount, value, change, used)
 
 
-def calculate_change(wallet : Wallet, change):
+def calculate_change(wallet: Wallet, change):
     change_detail = []
     # change, used = cal_recursive(wallet.bank_1000, 1000, change)
     # wallet.bank_1000 -= used
@@ -164,7 +189,7 @@ def calculate_change(wallet : Wallet, change):
     return wallet, change_detail, change
 
 
-def combine_wallet_with_income(vending,customer):
+def combine_wallet_with_income(vending, customer):
     vending['coin_1'] += customer.coin_1
     vending['coin_5'] += customer.coin_5
     vending['coin_10'] += customer.coin_10

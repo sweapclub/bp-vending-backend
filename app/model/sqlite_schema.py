@@ -24,3 +24,14 @@ class Wallet(Base):
     bank_100 = Column(Integer, nullable=False)
     bank_500 = Column(Integer, nullable=False)
     bank_1000 = Column(Integer, nullable=False)
+
+
+class Report(Base):
+    __tablename__ = "report"
+
+    report_ts = Column(String, primary_key=True)
+    product_name = Column(String, nullable=False)
+    product_price = Column(Integer, nullable=False)
+    amount = Column(Integer,nullable=False)
+    input_money = Column(Integer,nullable=False)
+    change = Column(Integer,nullable=False)
